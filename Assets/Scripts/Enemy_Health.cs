@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Enemy_Health : MonoBehaviour
 {
-    public float maxHealth = 1000; //°¢ ÆäÀÌÁî¸¶´Ù Ã¼·ÂÀ» ´Ù¸£°Ô ¼³Á¤ÇØ¾ß ÇÔ
+    public float maxHealth = 1000; //ê° í˜ì´ì¦ˆë§ˆë‹¤ ì²´ë ¥ì„ ë‹¤ë¥´ê²Œ ì„¤ì •í•´ì•¼ í•¨
     private float currentHealth;
     public int life = 3;
     private int currentLife;
     public string damageTag = "P_Attack";
+    public GameObject hitEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -20,16 +21,26 @@ public class Enemy_Health : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        
         if (other.tag == damageTag)
         {
+            Vector3 spawnPosition = other.transform.position;
+            // other ì˜¤ë¸Œì íŠ¸ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ì˜ ë°˜ëŒ€ë¡œ íšŒì „ ì„¤ì •
+            Quaternion spawnRotation = Quaternion.LookRotation(-other.transform.forward);
+            // hitEffectë¥¼ ìƒì„±
+            Instantiate(hitEffect, spawnPosition, spawnRotation);
+
+
             damaged(5.0f);
         }
+        Destroy(other.gameObject);
     }
 
     public void damaged(float damage)
     {
         currentHealth -= damage;
         Debug.Log($"Damaged: {damage}, Current Health: {currentHealth}");
+        
 
         if (currentHealth < 0)
         {
