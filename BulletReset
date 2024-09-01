@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BulletReset : MonoBehaviour
+{
+    public string targetTag = "E_Attack"; // 삭제할 총알 오브젝트의 태그
+
+    public void resetBullet()
+    {
+        // 지정된 태그를 가진 모든 오브젝트를 찾음
+        GameObject[] objectsToDestroy = GameObject.FindGameObjectsWithTag(targetTag);
+        Debug.Log($"Found {objectsToDestroy.Length} objects with tag {targetTag}");
+
+        // 찾은 오브젝트를 삭제함
+        foreach (GameObject obj in objectsToDestroy)
+        {
+            Debug.Log($"Destroying object: {obj.name}");
+            Destroy(obj);
+            obj.transform.parent = null; 
+    }
+}
