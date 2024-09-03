@@ -1,0 +1,60 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Player_hit : MonoBehaviour
+{
+    public GameObject PlayerVer_;
+    public BulletReset bulletReset; 
+
+    private GameObject Player;
+    private int life;
+    private int currentLife;
+    private GameObject Player_d;
+
+    private void Awake()
+    {
+        Player = PlayerVer_.transform.GetChild(0).gameObject;
+        Player_d = PlayerVer_.transform.GetChild(5).gameObject;
+        currentLife = Player.GetComponent<CharacterLife>().currentLife;
+        life = currentLife;
+    }
+
+    private void FixedUpdate()
+    {
+        currentLife = Player.GetComponent<CharacterLife>().currentLife;
+        if (currentLife != life)
+        {
+            life = currentLife;
+            Player.gameObject.SetActive(false);
+            Player_d.gameObject.SetActive(false);
+            StartCoroutine(respawn());
+        }
+    }
+
+    IEnumerator respawn()
+    {
+       
+        yield return new WaitForSeconds(1f);
+        
+        
+        Player.transform.localPosition = new Vector3(0, 0, 0);
+
+        
+        if (currentLife != 0)
+        {
+            Player.gameObject.SetActive(true);
+            Player_d.gameObject.SetActive(true);
+            
+           
+            if (bulletReset != null)
+            {
+                bulletReset.resetBullet();
+            }
+            else
+            {
+                Debug.LogWarning("BulletReset reference is not assigned.");
+            }
+        }
+    }
+}
