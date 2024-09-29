@@ -1,0 +1,153 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+
+public class UI : MonoBehaviour
+{
+    public Slider HP_bar;               
+    public GameObject HP_image;         
+    public GameObject Enemy;            
+    public GameObject Player;           
+    public TextMeshProUGUI player_life; 
+    public GameObject damage_effect_image;   
+    public GameObject enemy_die_effect_image;
+    public GameObject Menu;             
+    public GameObject End_UI;           
+    public AudioClip defeatMusic; 
+    public AudioClip victoryMusic; 
+    private AudioSource audioSource; 
+
+    private int Player_life;
+    private int Enemy_life;
+
+    float p_effect_index;   
+    float e_effect_index;   
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>(); 
+        Player_life = Player.GetComponent<CharacterLife>().life;
+        Enemy_life = 0;
+        HP_image.transform.GetChild(0).gameObject.SetActive(false);
+        End_UI = GameObject.Find("Canvas").transform.Find("End_UI").gameObject;
+    }
+
+    void Change_Eneny_life()
+    {
+        if (Enemy_life > Enemy.GetComponent<Enemy_Health>().life)
+        {
+            e_effect_index = 1 - Enemy_life * 0.25f;
+            StartCoroutine(Enemy_die(e_effect_index));
+            if (Enemy_life <= 1)
+            {
+                Enemy_life -= 1;
+            }
+            else if (Enemy_life == 2)
+            {
+                Enemy_life -= 1;
+                HP_image.transform.GetChild(0).gameObject.SetActive(false);
+            }
+            else
+            {
+                Enemy_life -= 1;
+                Destroy(HP_image.transform.GetChild(0).gameObject);
+            }
+        }
+
+        if (Enemy_life < Enemy.GetComponent<Enemy_Health>().life)
+        {
+            if (Enemy_life == 0)
+            {
+                Enemy_life += 1;
+            }
+            else if (Enemy_life == 1)
+            {
+                Enemy_life += 1;
+                HP_image.transform.GetChild(0).gameObject.SetActive(true);
+            }
+            else
+            {
+                Enemy_life += 1;
+                Instantiate(HP_image.transform.GetChild(0), HP_image.transform.GetChild(0).position, Quaternion.identity, HP_image.transform);
+                HP_image.transform.GetChild(0).Translate(-10, 0, 0);
+            }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Time.timeScale = 0;
+            Menu.SetActive(true);
+        }
+
+        if (Player_life != Player.GetComponent<CharacterLife>().currentLife)
+        {
+            Player_life = Player.GetComponent<CharacterLife>().currentLife;
+            if (Player_life == 0)
+            {
+                End_UI.gameObject.SetActive(true);
+                damage_effect_image = End_UI.transform.Find("End_effect_Image").gameObject;
+                End_UI.transform.Find("YOU_DIED").gameObject.SetActive(true);
+                Time.timeScale = 0;
+                End_UI.transform.Find("End_effect_Image").gameObject.SetActive(true);
+                audioSource.PlayOneShot(defeatMusic);
+            }
+            p_effect_index = 1 - Player_life * 0.25f;
+            StartCoroutine(Hit_detectiony(p_effect_index));
+        }
+
+        player_life.text = Player_life.ToString();
+
+        if (Enemy.gameObject == null)
+        {
+            End_UI.gameObject.SetActive(true);
+            enemy_die_effect_image = End_UI.transform.Find("End_effect_Image").gameObject;
+            End_UI.transform.Find("YOU_WIN").gameObject.SetActive(true);
+            Time.timeScale = 0;
+            End_UI.transform.Find("End_effect_Image").gameObject.SetActive(true);
+            audioSource.PlayOneShot(victoryMusic);
+        }
+        
+        HP_bar.maxValue = Enemy.GetComponent<Enemy_Health>().maxHealth;     
+        HP_bar.value = Enemy.GetComponent<Enemy_Health>().currentHealth;    
+
+        if (Enemy_life != Enemy.GetComponent<Enemy_Health>().life)
+        {
+            Change_Eneny_life();
+        }
+    }
+
+    IEnumerator Enemy_die(float i)
+    {
+        enemy_die_effect_image.GetComponent<Image>().color = new Color(0, 1, 0.7f, i);
+        yield return new WaitForSecondsRealtime(0.02f);
+        if (i <= 0)
+        {
+            End_UI.transform.Find("End_effect_Image").gameObject.SetActive(false);
+        }
+        else
+        {
+            i -= 0.01f;
+            StartCoroutine(Enemy_die(i));
+        }
+    }
+
+    IEnumerator Hit_detectiony(float i)
+    {
+        damage_effect_image.GetComponent<Image>().color = new Color(1, 0, 0, i);
+        yield return new WaitForSecondsRealtime(0.02f);
+        if (i <= 0)
+        {
+            End_UI.transform.Find("End_effect_Image").gameObject.SetActive(false);
+        }
+        else
+        {
+            i -= 0.01f;
+            StartCoroutine(Hit_detectiony(i));
+        }
+    }
+}
