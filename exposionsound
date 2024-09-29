@@ -1,0 +1,222 @@
+using System.Collections;
+using UnityEngine;
+
+public class Enemy_Health : MonoBehaviour
+{
+    public float maxHealth = 1000;
+    public float currentHealth;
+    public int life = 3;
+    private int currentLife;
+    public string damageTag = "P_Attack";
+    public GameObject hitEffect;
+    public float abilityTime = 4.0f;
+    public float healthRecoveryRate = 30.0f;
+    public float recoveryDelay = 3.0f;
+
+    private bool isInvulnerable = false;
+    private float recoveryTimer;
+    private bool isRecovering = false;
+
+    public GameObject warningEffect;
+    public GameObject destroyEffect;
+    public GameObject ExplodeEffect;
+
+    public BulletReset bulletReset;
+
+    public GameObject phase1;
+    public GameObject phase2;
+    public GameObject phase3;
+
+    public AudioSource audioSource;
+    public AudioClip normalPhase; 
+    public AudioClip finalPhase;
+    public AudioClip explosionSound; 
+
+    public GameObject cameraObject;
+    public GameObject Item_1up;
+
+    void Start()
+    {
+        maxHealth = 1000f;
+        currentHealth = maxHealth;
+        currentLife = life;
+        StartCoroutine(PreparingNewPhase());
+        UpdatePhase();
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = normalPhase;
+        audioSource.Play();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == damageTag && !isInvulnerable)
+        {
+            Vector3 spawnPosition = other.transform.position;
+            Quaternion spawnRotation = Quaternion.LookRotation(-other.transform.forward);
+            Instantiate(hitEffect, spawnPosition, spawnRotation);
+            damaged(5.0f);
+            Destroy(other.gameObject);
+        }
+    }
+
+    public void damaged(float damage)
+    {
+        if (!isInvulnerable)
+        {
+            currentHealth -= damage;
+
+            if (life == 1)
+            {
+                recoveryTimer = recoveryDelay;
+                isRecovering = false;
+            }
+
+            if (currentHealth <= 0)
+            {
+                life -= 1;
+                UpdatePhase();
+                if (life > 0)
+                {
+                    if (life == 2)
+                    {
+                        maxHealth = 1200;
+                    }
+                    else if (life == 1)
+                    {
+                        maxHealth = 2000;
+                    }
+                    currentHealth = maxHealth;
+                    StartCoroutine(PreparingNewPhase());
+                    StartCoroutine(ability());
+
+                    if (bulletReset != null)
+                    {
+                        bulletReset.resetBullet();
+                    }
+                }
+                else
+                {
+                    StartCoroutine(Defeated());
+                }
+            }
+        }
+    }
+
+    private IEnumerator Defeated()
+    {
+        FlyObject1 flyObject1 = GetComponent<FlyObject1>();
+        if (flyObject1 != null) flyObject1.enabled = false;
+
+        if (phase1 != null) phase1.SetActive(false);
+        if (phase2 != null) phase2.SetActive(false);
+        if (phase3 != null) phase3.SetActive(false);
+
+        isInvulnerable = true;
+        destroyEffect.SetActive(true);
+        StartCoroutine(Vibrate());
+
+        audioSource.PlayOneShot(explosionSound); 
+
+        yield return new WaitForSeconds(3); 
+
+        Instantiate(ExplodeEffect, transform.position, transform.rotation);
+
+        ThirdPersonCamera thirdPersonCamera = cameraObject.GetComponent<ThirdPersonCamera>();
+        if (thirdPersonCamera != null)
+        {
+            thirdPersonCamera.Vibrate();
+        }
+
+        Destroy(gameObject);
+    }
+
+    private IEnumerator Vibrate()
+    {
+        Vector3 currentPosition = transform.position;
+
+        while (true)
+        {
+            float x = Random.Range(-0.2f, 0.2f);
+            float y = Random.Range(-0.2f, 0.2f);
+            float z = Random.Range(-0.2f, 0.2f);
+            transform.position = currentPosition + new Vector3(x, y, z);
+
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    private IEnumerator ability()
+    {
+        isInvulnerable = true;
+        yield return new WaitForSeconds(abilityTime);
+        isInvulnerable = false;
+    }
+
+    void Update()
+    {
+        if (life == 1)
+        {
+            if (!isRecovering)
+            {
+                recoveryTimer -= Time.deltaTime;
+                if (recoveryTimer <= 0)
+                {
+                    RecoverHealth(healthRecoveryRate * Time.deltaTime);
+                }
+            }
+        }
+    }
+
+    void RecoverHealth(float amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+    }
+
+    public IEnumerator PreparingNewPhase()
+    {
+        float duration = abilityTime - 1f;
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            currentHealth = Mathf.Lerp(1, maxHealth, elapsed / duration);
+            yield return null;
+        }
+
+        currentHealth = maxHealth;
+    }
+
+    private void UpdatePhase()
+    {
+        switch (life)
+        {
+            case 3:
+                if (phase1 != null) phase1.SetActive(true);
+                if (phase2 != null) phase2.SetActive(false);
+                if (phase3 != null) phase3.SetActive(false);
+                break;
+            case 2:
+                dropOneUp();
+                if (phase1 != null) phase1.SetActive(false);
+                if (phase2 != null) phase2.SetActive(true);
+                if (phase3 != null) phase3.SetActive(false);
+                break;
+            case 1:
+                if (phase1 != null) phase1.SetActive(false);
+                if (phase2 != null) phase2.SetActive(false);
+                if (phase3 != null) phase3.SetActive(true);
+                warningEffect.SetActive(true);
+                audioSource.Stop();
+                audioSource.clip = finalPhase;
+                audioSource.Play();
+                break;
+        }
+    }
+
+    public void dropOneUp()
+    {
+        Instantiate(Item_1up, transform.position, Quaternion.identity);
+    }
+}
