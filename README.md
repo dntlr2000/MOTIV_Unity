@@ -8,5 +8,5 @@ Tab 카메라 거리 조절 /
 10/6 기준 최신 패키지
 https://drive.google.com/file/d/161FVXzmg0b8mkbVbRR2ItAwSViNx-QMz/view?usp=sharing
 
-09/24 기준 최신 빌드
-https://drive.google.com/file/d/16_9KuhK5NkVc6rI87375npevdSXTixQC/view?usp=drive_link
+10/6 기준 최신 빌드 (1.0)
+https://drive.google.com/file/d/1ZMYSiSUg9itXcCE8reNqhE5Aki-O2w-v/view?usp=sharing
