@@ -1,0 +1,112 @@
+using System.Collections;
+using UnityEngine;
+
+public class Minion_HP : MonoBehaviour
+{
+    public float maxHealth; // ���� �ִ� ü��
+    private float currentHealth; // ���� ü��
+    //public int life = 3; // ���� ���� �� (ü���� ������ ����)
+    //private int currentLife; // ���� ���� ��
+    public string damageTag = "P_Attack"; // ������ ���ظ� �ִ� �±�
+    public GameObject hitEffect; // ���� �ǰݵ� �� ������ ����Ʈ
+    public GameObject MinionDefeated;
+    //public float abilityTime = 2.0f; // ������ ��ȯ �� ���� �ð�
+    //public float healthRecoveryRate = 30.0f; // ü�� ȸ���� (�ʴ�)
+    //public float recoveryDelay = 3.0f; // ���ظ� ���� �ʾ��� �� ȸ�� ���� ��� �ð� (����)
+
+    public AudioClip hitSound;
+    private AudioSource audioSource;
+
+    private bool isInvulnerable = false; // ���� ����(�Ұ�)
+    //private float recoveryTimer; // ȸ�� Ÿ�̸�
+    //private bool isRecovering = false; // ȸ�� ������ ����
+
+    //public BulletReset bulletReset;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+        currentHealth = maxHealth; //��� HP
+        audioSource = GetComponent<AudioSource>();
+
+    }
+
+    // �浹 
+    void OnTriggerEnter(Collider other)
+    {
+        // �浹�� ��ü�� �±װ� damageTag�� ��ġ�� ��
+        if (other.tag == damageTag && !isInvulnerable)
+        {
+            Vector3 spawnPosition = other.transform.position;
+
+            Quaternion spawnRotation = Quaternion.LookRotation(-other.transform.forward);
+
+            // hitEffect ��ü�� �����Ͽ� �浹 ��ġ�� ��ġ
+            Instantiate(hitEffect, spawnPosition, spawnRotation);
+
+            if (hitSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(hitSound);
+            }
+
+            // ���ظ� ó���ϴ� �Լ� ȣ��
+            damaged(5.0f); // 5.0�� ���ظ� ����
+
+            // �浹�� ��ü�� ����
+            Destroy(other.gameObject);
+        }
+
+    }
+
+    // ���� ���ظ� �Ծ��� �� ȣ��Ǵ� �Լ�
+    public void damaged(float damage)
+    {
+        // ���� ���°� �ƴ� ���� ���ظ� ó��
+        if (!isInvulnerable)
+        {
+            currentHealth -= damage; // ���� ü�¿��� ���ط��� ����
+            Debug.Log($"Damaged: {damage}, Current Health: {currentHealth}"); // ���ط��� ���� ü�� ���
+
+
+
+            // ���� ü���� 0���� ������
+            if (currentHealth <= 0)
+            {
+
+                // ���� ���� 0�� �Ǹ� ���� ����
+                Debug.Log("Enemy Defeated"); // ���� �й��ߴٴ� �޽��� ���
+                //gameObject.SetActive(false); // �� ���� ������Ʈ�� ��Ȱ��ȭ
+                Instantiate(MinionDefeated, transform.position, transform.rotation);
+                Destroy(gameObject);
+
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+}
+    /*
+    // ���� �ð�
+    private IEnumerator ability()
+    {
+        isInvulnerable = true; // ���� ���·� ����
+        yield return new WaitForSeconds(abilityTime); // ���� �ð� ���� ���
+        isInvulnerable = false; // ���� ���� ����
+    }
+
+    
+
+    // ü�� ȸ�� 
+    void RecoverHealth(float amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth); //�ִ� ü�±��� ȸ�� (���̵��� ���� ���� �ʿ�)
+        Debug.Log($"Recovered Health: {amount}, Current Health: {currentHealth}"); //ȸ�� Ȯ�� �α�
+        isRecovering = true; // ȸ�� ���·� ����
+    }
+}
+    */
