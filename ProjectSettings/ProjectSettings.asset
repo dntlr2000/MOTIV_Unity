@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: 8fb5121dd1c7e014594c6f5d7214ff5e
+  productGUID: 0eb0ddd86c797864183a9a14ff7c5299
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: TeamProject_Test
+  productName: Motiv_TeamProject
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -677,14 +677,14 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: TeamProject_Test
+  metroPackageName: Motiv_TeamProject
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: TeamProject_Test
+  metroApplicationDescription: Motiv_TeamProject
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -754,10 +754,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 013eb35b-eb0f-4e8b-9868-adbb600dccdd
+  cloudProjectId: b87a6a02-ee3f-4481-8064-b5fdb5ae5bfc
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: TeamProject_Test
+  projectName: Motiv_TeamProject 2024-08-05_21-21-18
   organizationId: dntlr2000
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

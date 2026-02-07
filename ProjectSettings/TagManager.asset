@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - P_Attack
+  - E_Attack
+  - oneUp
   layers:
   - Default
   - TransparentFX
