@@ -14,6 +14,13 @@ public class title : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 
+    public void Start_game()
+    {
+        PlaySound();
+        Time.timeScale = 1.0f;
+        SceneManager.LoadScene("SampleScene");
+    }
+
     public void How_to_play()
     {
         PlaySound();

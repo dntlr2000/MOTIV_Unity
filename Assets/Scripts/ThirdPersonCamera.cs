@@ -27,7 +27,7 @@ public class ThirdPersonCamera : MonoBehaviour
         UpdateCameraPosition();
     }
 
-    void LateUpdate() 
+    void LateUpdate() //진동 관련 코드는 더미데이터화가 되어버림
     {
         if (target && !isVibrating) // 진동 중이 아닐 때만 카메라 위치 갱신
         {
@@ -51,13 +51,11 @@ public class ThirdPersonCamera : MonoBehaviour
         transform.position = position;
     }
 
-    //카메라 진동(사용하지 않기로 처리하면서 주석처리)
-    /*
+    
     public void Vibrate()  //진동 관련 코드는 더미데이터화
     {
         StartCoroutine(DoVibration());
     }
-    
 
     private IEnumerator DoVibration()
     {
@@ -79,7 +77,6 @@ public class ThirdPersonCamera : MonoBehaviour
         transform.position = originalPos; // 진동이 끝나면 원래 위치로 복구
         isVibrating = false; // 진동 종료
     }
-    */
 
     public void controlDistance() //Tab 키 누르면 다른 스크립트에서 호출됨
     {
